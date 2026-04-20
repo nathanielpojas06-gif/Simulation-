@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPSU | Professional Biometric Attendance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #15803d; /* Professional Green */
+            --gold: #FFD700;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text: #1e293b;
+            --danger: #ef4444;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            color: var(--text); 
+            overflow-x: hidden;
+        }
+
+        /* --- LANDING PAGE --- */
+        #role-page {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, #064e3b 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: white;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 45px; border-radius: 35px; text-align: center; width: 340px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-main {
+            width: 90px; height: 90px; border-radius: 50%; background: white;
+            padding: 10px; border: 4px solid var(--gold); margin-bottom: 25px;
+            object-fit: contain;
+        }
+
+        /* --- DASHBOARD HEADER --- */
+        header {
+            background: var(--white); padding: 15px 5%; 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 4px solid var(--gold); position: sticky; top: 0; z-index: 100;
+        }
+
+        .container { padding: 30px 5%; max-width: 1100px; margin: auto; }
+
+        /* --- FINGERPRINT SCANNER --- */
+        .fingerprint-wrapper {
+            width: 160px; height: 160px; margin: 30px auto;
+            position: relative; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            background: #f1f5f9; border-radius: 50%; border: 2px dashed #cbd5e1;
+            transition: 0.3s;
+        }
+
+        .fp-icon { font-size: 70px; color: #94a3b8; transition: 0.3s; z-index: 5; }
+        
+        .ripple {
+            position: absolute; width: 100%; height: 100%;
+            border: 4px solid var(--gold); border-radius: 50%;
+            animation: pulse 1.5s infinite; display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 1; }
+            100% { transform: scale(1.4); opacity: 0; }
+        }
+
+        .scanning .fp-icon { color: var(--primary); filter: drop-shadow(0 0 10px var(--gold)); }
+        .scanning .ripple { display: block; }
+
+        /* --- CARDS & TABLES --- */
+        .card { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        
+        .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .stat-item { background: var(--white); padding: 20px; border-radius: 15px; border-left: 5px solid var(--primary); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; padding: 15px; background: #f8fafc; color: #64748b; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; }
+
+        /* --- UI ELEMENTS --- */
+        .btn { padding: 14px 24px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: white; width: 100%; }
+        .btn-gold { background: var(--gold); color: #064e3b; }
+        
+        .search-input {
+            width: 100%; max-width: 300px; padding: 12px; 
+            border: 1px solid #cbd5e1; border-radius: 10px; outline: none;
+        }
+
+        input[type="text"] {
+            width: 100%; padding: 15px; margin: 10px 0; 
+            border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box;
+            transition: 0.2s;
+        }
+
+        input[type="text"]:focus { border-color: var(--primary); outline: none; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div id="role-page">
+    <div class="glass-card">
+        <img src="ha.jpg" class="logo-main" alt="CPSU Logo" onerror="this.src='https://via.placeholder.com/100?text=CPSU'">
+        <h1 style="margin:0; font-size: 1.6rem; font-weight: 800;">CPSU PORTAL</h1>
+        <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 35px;">Attendance Monitoring System</p>
+        
+        <button class="btn btn-gold" style="width:100%" onclick="openView('student')">STUDENT CHECK-IN</button>
+        <button class="btn" style="width:100%; margin-top:12px; background:transparent; color:white; border:1px solid rgba(255,255,255,0.4);" onclick="openView('admin')">ADMIN DASHBOARD</button>
+    </div>
+</div>
+
+<div id="app-interface" class="hidden">
+    <header>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <img src="ha.jpg" width="40" height="40" style="border-radius:50%; border:2px solid var(--gold);" onerror="this.src='https://via.placeholder.com/40'">
+            <h2 style="margin:0; font-size: 1.1rem; color: var(--primary);">CPSU MONITOR</h2>
+        </div>
+        <button class="btn btn-gold" style="padding: 8px 16px; font-size: 0.8rem;" onclick="location.reload()">EXIT SYSTEM</button>
+    </header>
+
+    <div class="container">
+        <div id="student-view" class="hidden">
+            <div class="card" style="text-align: center; max-width: 500px; margin: auto;">
+                <h2 id="step-title">Biometric Identity</h2>
+                <p id="step-desc" style="color: #64748b;">Tap the icon to start fingerprint scan</p>
+
+                <div class="fingerprint-wrapper" id="fp-sensor" onclick="runBiometricScan()">
+                    <div class="ripple"></div>
+                    <div class="fp-icon" id="fp-icon">☝️</div>
+                </div>
+
+                <div id="log-form" class="hidden">
+                    <input type="text" id="stu-id" placeholder="Enter Student ID (e.g. 2026-0001)">
+                    <input type="text" id="stu-name" placeholder="Enter Full Name">
+                    <button class="btn btn-primary" onclick="confirmAttendance()">CONFIRM ATTENDANCE</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="admin-view" class="hidden">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <small style="color: #64748b;">TOTAL LOGS</small>
+                    <div id="stat-total" style="font-size: 1.8rem; font-weight: 800;">0</div>
+                </div>
+                <div class="stat-item">
+                    <small style="color: #64748b;">LOGS TODAY</small>
+                    <div id="stat-today" style="font-size: 1.8rem; font-weight: 800; color: #10b981;">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <h3 style="margin: 0;">Attendance Record</h3>
+                    <div style="display: flex; gap: 10px; flex-grow: 1; justify-content: flex-end;">
+                        <input type="text" class="search-input" id="search-bar" placeholder="Search Name or ID..." onkeyup="filterRecords()">
+                        <button class="btn btn-gold" onclick="exportToCSV()" style="font-size: 0.8rem;">EXPORT CSV</button>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table id="records-table">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Time</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Database initialization
+    let records = JSON.parse(localStorage.getItem("cpsu_records")) || [];
+
+    // --- NAVIGATION ---
+    function openView(role) {
+        if(role === 'admin') {
+            const pin = prompt("🔐 Enter Admin Access Code:");
+            if(pin !== "1234") return alert("Unauthorized access!");
+        }
+
+        document.getElementById("role-page").classList.add("hidden");
+        document.getElementById("app-interface").classList.remove("hidden");
+
+        if(role === 'student') {
+            document.getElementById("student-view").classList.remove("hidden");
+            document.getElementById("admin-view").classList.add("hidden");
+        } else {
+            document.getElementById("admin-view").classList.remove("hidden");
+            document.getElementById("student-view").classList.add("hidden");
+            refreshAdminDashboard();
+        }
+    }
+
+    // --- STUDENT BIOMETRIC LOGIC ---
+    function runBiometricScan() {
+        const sensor = document.getElementById("fp-sensor");
+        const title = document.getElementById("step-title");
+        const desc = document.getElementById("step-desc");
+        const form = document.getElementById("log-form");
+        const icon = document.getElementById("fp-icon");
+
+        sensor.classList.add("scanning");
+        title.innerText = "Authenticating...";
+        desc.innerText = "Processing biometric data. Please wait.";
+
+        setTimeout(() => {
+            sensor.classList.remove("scanning");
+            icon.innerHTML = "✅";
+            icon.style.color = "#10b981";
+            title.innerText = "Identity Verified";
+            desc.innerText = "Match found. Please enter your details below.";
+            form.classList.remove("hidden");
+            sensor.onclick = null; 
+        }, 2500);
+    }
+
+    function confirmAttendance() {
+        const idInput = document.getElementById("stu-id");
+        const nameInput = document.getElementById("stu-name");
+
+        if(!idInput.value.trim() || !nameInput.value.trim()) {
+            return alert("Error: Both fields are required.");
+        }
+
+        const newLog = {
+            id: idInput.value.trim(),
+            name: nameInput.value.trim(),
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            date: new Date().toLocaleDateString()
+        };
+
+        records.unshift(newLog);
+        localStorage.setItem("cpsu_records", JSON.stringify(records));
+
+        alert("✅ Attendance logged successfully!");
+        location.reload(); 
+    }
+
+    // --- ADMIN LOGIC ---
+    function refreshAdminDashboard() {
+        const totalStat = document.getElementById("stat-total");
+        const todayStat = document.getElementById("stat-today");
+
+        totalStat.innerText = records.length;
+        
+        const todayDate = new Date().toLocaleDateString();
+        const todayCount = records.filter(r => r.date === todayDate).length;
+        todayStat.innerText = todayCount;
+
+        updateTable(records);
+    }
+
+    function updateTable(dataList) {
+        const tbody = document.getElementById("table-body");
+        tbody.innerHTML = "";
+
+        if(dataList.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">No records found.</td></tr>`;
+            return;
+        }
+
+        dataList.forEach((record, index) => {
+            const row = `
+                <tr>
+                    <td><strong>${record.id}</strong></td>
+                    <td>${record.name}</td>
+                    <td>${record.time}</td>
+                    <td>${record.date}</td>
+                    <td><button onclick="deleteRecord(${index})" style="color:var(--danger); border:none; background:none; cursor:pointer; font-weight:bold;">Remove</button></td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function filterRecords() {
+        const query = document.getElementById("search-bar").value.toLowerCase();
+        const filtered = records.filter(r => 
+            r.name.toLowerCase().includes(query) || 
+            r.id.toLowerCase().includes(query)
+        );
+        updateTable(filtered);
+    }
+
+    function deleteRecord(index) {
+        if(confirm("Permanently delete this attendance record?")) {
+            records.splice(index, 1);
+            localStorage.setItem("cpsu_records", JSON.stringify(records));
+            refreshAdminDashboard();
+        }
+    }
+
+    function exportToCSV() {
+        if(records.length === 0) return alert("No data to export.");
+        
+        // CSV Header with BOM for Excel compatibility
+        let csvContent = "\uFEFFStudent ID,Student Name,Time,Date\n";
+        
+        records.forEach(r => {
+            // Escape quotes and wrap values in quotes for CSV safety
+            const safeName = r.name.replace(/"/g, '""');
+            const safeID = r.id.replace(/"/g, '""');
+            csvContent += `"${safeID}","${safeName}","${r.time}","${r.date}"\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `CPSU_Attendance_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>
+
+</body>
+                      </html>
+                      
